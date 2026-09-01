@@ -1,231 +1,212 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA PINHEIRO | PERFORMANCE E-COMMERCE</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Análise de Vendas - Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-body: #0a0a0c; --card-bg: #1c1c1e;
-            --pinheiro-blue: #2b2d84; --pinheiro-orange: #f38218; --pinheiro-green: #22c55e;
-            --pinheiro-red: #ef4444; --text-main: #ffffff; --text-dim: #a1a1aa; 
-            --border: rgba(255, 255, 255, 0.1);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px; }
-        .container { max-width: 1450px; margin: 0 auto; }
-
-        header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
-        .title-group h1 { font-size: 26px; font-weight: 800; text-transform: uppercase; }
-        .status-box { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        .pill { background: var(--card-bg); padding: 8px 16px; border-radius: 50px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #555; }
-        .dot.online { background: var(--pinheiro-green); box-shadow: 0 0 10px var(--pinheiro-green); }
-
-        /* Meta Cards com Semáforo */
-        .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
-        .card-meta { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); text-align: center; }
-        .meta-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-        .meta-value { font-size: 22px; font-weight: 800; margin: 8px 0; display: block; }
-        .meta-percent { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 50px; display: inline-block; }
-        
-        .bg-red { background: rgba(239, 68, 68, 0.1); color: var(--pinheiro-red); border: 1px solid var(--pinheiro-red); }
-        .bg-orange { background: rgba(243, 130, 24, 0.1); color: var(--pinheiro-orange); border: 1px solid var(--pinheiro-orange); }
-        .bg-green { background: rgba(34, 197, 94, 0.1); color: var(--pinheiro-green); border: 1px solid var(--pinheiro-green); }
-
-        /* Outros Cards */
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .card-kpi { background: var(--card-bg); padding: 20px; border-radius: 24px; border: 1px solid var(--border); }
-        .kpi-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
-        .kpi-value { font-size: 18px; font-weight: 800; margin-top: 8px; display: block; }
-        .kpi-sub { font-size: 11px; margin-top: 5px; color: var(--pinheiro-green); font-weight: 600; }
-
-        /* Tabela */
-        .table-section { background: var(--card-bg); padding: 20px; border-radius: 28px; border: 1px solid var(--border); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { text-align: left; padding: 12px; background: #111827; color: var(--text-dim); border: 1px solid var(--border); text-transform: uppercase; }
-        td { padding: 12px; border: 1px solid var(--border); }
-        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
-        .val-bold { font-family: 'Courier New', monospace; font-weight: bold; text-align: right; }
-        
-        select { background: #000; color: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 50px; cursor: pointer; outline: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .card { transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <div class="container">
-        <header>
-            <div class="title-group">
-                <p style="color: var(--pinheiro-orange); font-weight: bold; font-size: 11px; letter-spacing: 2px;">PINHEIRO HUB OPERACIONAL</p>
-                <h1>Análise de Metas & Performance</h1>
-                <div class="status-box">
-                    <div class="pill"><div id="dot" class="dot"></div> <span id="status-text">Sincronizando...</span></div>
-                    <select id="mesSelect" onchange="renderizar()"><option value="all">Consolidado Anual</option></select>
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Dashboard de Performance</h1>
+                <p class="text-gray-500">Análise de vendas e rupturas</p>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-white p-2 rounded-lg shadow-sm border">
+                <label class="font-semibold text-gray-700">Período:</label>
+                <select id="monthSelector" class="outline-none bg-transparent cursor-pointer text-blue-600 font-bold">
+                    <option value="consolidado">Consolidado (Tudo)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid de Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            
+            <!-- Card Maior Venda -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
+                <p class="text-sm text-gray-500 uppercase font-bold">Mês de Maior Venda</p>
+                <h2 id="topMonth" class="text-2xl font-bold text-gray-800 mt-2">-</h2>
+                <p id="topMonthValue" class="text-blue-500 text-sm font-medium mt-1"></p>
+            </div>
+
+            <!-- Card Rupturas VIP -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-400">
+                <p class="text-sm text-gray-500 uppercase font-bold">Rupturas VIP</p>
+                <h2 id="rupturaVip" class="text-3xl font-bold text-gray-800 mt-2">0</h2>
+                <span class="text-xs text-gray-400 italic">Total no período</span>
+            </div>
+
+            <!-- Card Rupturas iFood -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-600">
+                <p class="text-sm text-gray-500 uppercase font-bold">Rupturas iFood</p>
+                <h2 id="rupturaIfood" class="text-3xl font-bold text-gray-800 mt-2">0</h2>
+                <span class="text-xs text-gray-400 italic">Total no período</span>
+            </div>
+
+            <!-- Participação -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500 overflow-hidden">
+                <p class="text-sm text-gray-500 uppercase font-bold">Market Share (Lojas)</p>
+                <div id="participationList" class="mt-3 text-sm space-y-1">
+                    <!-- Dinâmico -->
                 </div>
             </div>
-            <img src="https://raw.githubusercontent.com/CamilaDS13/imagens/Principal/logobranca.png" style="height: 40px;">
-        </header>
+        </div>
 
-        <!-- CARDS DE ATINGIMENTO DE METAS -->
-        <div class="meta-grid">
-            <div class="card-meta">
-                <span class="meta-label">Atingimento Geral</span>
-                <span id="m-geral-val" class="meta-value">R$ 0,00</span>
-                <div id="m-geral-status" class="meta-percent">0% atingido</div>
+        <!-- Cards de Destaque por Canal -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl shadow-sm border border-blue-100">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-blue-800 uppercase tracking-wider">Top Loja - Canal VIP</h3>
+                    <span class="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded">Vendas</span>
+                </div>
+                <p id="bestStoreVip" class="text-3xl font-extrabold text-gray-800 mt-4">-</p>
+                <p id="bestStoreVipVal" class="text-blue-600 font-semibold"></p>
             </div>
-            <div class="card-meta">
-                <span class="meta-label">Atingimento VIP (App)</span>
-                <span id="m-app-val" class="meta-value">R$ 0,00</span>
-                <div id="m-app-status" class="meta-percent">0% atingido</div>
-            </div>
-            <div class="card-meta">
-                <span class="meta-label">Atingimento IFood</span>
-                <span id="m-ifood-val" class="meta-value">R$ 0,00</span>
-                <div id="m-ifood-status" class="meta-percent">0% atingido</div>
+
+            <div class="card bg-gradient-to-br from-red-50 to-white p-6 rounded-2xl shadow-sm border border-red-100">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-red-800 uppercase tracking-wider">Top Loja - iFood</h3>
+                    <span class="bg-red-200 text-red-800 text-xs px-2 py-1 rounded">Vendas</span>
+                </div>
+                <p id="bestStoreIfood" class="text-3xl font-extrabold text-gray-800 mt-4">-</p>
+                <p id="bestStoreIfoodVal" class="text-red-600 font-semibold"></p>
             </div>
         </div>
 
-        <div class="metrics-grid">
-            <div class="card-kpi"><span class="kpi-label">Loja Destaque (VIP)</span><span id="k-top-vip" class="kpi-value">-</span><span id="k-top-vip-val" class="kpi-sub"></span></div>
-            <div class="card-kpi"><span class="kpi-label">Loja Destaque (IFOOD)</span><span id="k-top-ifood" class="kpi-value">-</span><span id="k-top-ifood-val" class="kpi-sub"></span></div>
-            <div class="card-kpi"><span class="kpi-label">Mês de Maior Venda</span><span id="k-melhor-mes" class="kpi-value">-</span></div>
-            <div class="card-kpi"><span class="kpi-label">Venda Realizada Canais</span><span id="k-total-real" class="kpi-value">R$ 0,00</span></div>
-        </div>
-
-        <div class="table-section">
-            <h3 style="margin-bottom:15px; font-size:13px; color:var(--text-dim)">PARTICIPAÇÃO NO FATURAMENTO GERAL DA EMPRESA</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:250px">Loja</th>
-                        <th class="val-bold">Venda VIP</th><th class="val-bold">Venda IFOOD</th>
-                        <th class="val-bold">Realizado Lojas</th><th class="val-bold" style="color:var(--pinheiro-orange)">% Participação</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-corpo"></tbody>
-            </table>
+        <div id="loader" class="text-center mt-20 text-gray-500">
+            Carregando dados da planilha...
         </div>
     </div>
 
     <script>
-        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYAbzRN6yVIhTqgC17o5QlfH6uU5R8-0Jssq03US8b0R56ab_9ZGPsJr3sJvrlRSWm5AA7YdMINYMt/pub?output=csv";
-        let db = [];
-        const ordemMeses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYAbzRN6yVIhTqgC17o5QlfH6uU5R8-0Jssq03US8b0R56ab_9ZGPsJr3sJvrlRSWm5AA7YdMINYMt/pub?output=csv';
 
-        async function carregar() {
-            try {
-                const r = await fetch(URL_CSV + "&cache=" + new Date().getTime());
-                const t = await r.text();
-                const workbook = XLSX.read(t, { type: 'string' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet);
-                processar(rows);
-                document.getElementById('dot').className = "dot online";
-                document.getElementById('status-text').innerText = "Dados Sincronizados";
-            } catch (e) { document.getElementById('status-text').innerText = "Erro ao buscar dados"; }
-        }
+        let globalData = [];
+        let months = [];
 
-        function n(v) {
-            if(!v) return 0;
-            if(typeof v === 'number') return v;
-            // Remove R$, pontos (milhar) e troca vírgula por ponto (decimal)
-            let s = v.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
-            return parseFloat(s) || 0;
-        }
-
-        function processar(rows) {
-            const head = Object.keys(rows[0]).map(h => h.toString().toUpperCase().trim());
-            
-            db = rows.map(r => ({
-                mes: (r['DATA'] || "").toString().toUpperCase().trim(),
-                loja: r['LOJA'],
-                vVip: n(r['VENDA VIP']),
-                vIfood: n(r['VENDA IFOOD']),
-                mG: n(r['META GERAL']),
-                mA: n(r['META APLICATIVO']),
-                mI: n(r['META IFOOD'])
-            })).filter(i => i.loja && i.mes);
-
-            const meses = [...new Set(db.map(i => i.mes))].sort((a,b) => ordemMeses.indexOf(a) - ordemMeses.indexOf(b));
-            const sel = document.getElementById('mesSelect');
-            meses.forEach(m => sel.innerHTML += `<option value="${m}">${m}</option>`);
-            renderizar();
-        }
-
-        function getCor(p) { return p >= 100 ? 'bg-green' : p >= 80 ? 'bg-orange' : 'bg-red'; }
-
-        function renderizar() {
-            const f = document.getElementById('mesSelect').value;
-            const dados = f === 'all' ? db : db.filter(i => i.mes === f);
-
-            const tVip = dados.reduce((a,b)=>a+b.vVip,0);
-            const tIfood = dados.reduce((a,b)=>a+b.vIfood,0);
-            const tReal = tVip + tIfood;
-            
-            // Metas
-            let mG=0, mA=0, mI=0;
-            if(f === 'all') {
-                let mMes = {}; db.forEach(i => { if(!mMes[i.mes]) mMes[i.mes] = {g:i.mG, a:i.mA, i:i.mI}; });
-                mG = Object.values(mMes).reduce((a,b)=>a+b.g,0);
-                mA = Object.values(mMes).reduce((a,b)=>a+b.a,0);
-                mI = Object.values(mMes).reduce((a,b)=>a+b.i,0);
-            } else { 
-                mG = dados[0].mG; mA = dados[0].mA; mI = dados[0].mI; 
-            }
-
-            const pG = (tReal/mG*100)||0; const pA = (tVip/mA*100)||0; const pI = (tIfood/mI*100)||0;
-
-            // Update Cards Metas
-            document.getElementById('m-geral-val').innerText = mG.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-            document.getElementById('m-geral-status').innerText = pG.toFixed(1) + "% atingido";
-            document.getElementById('m-geral-status').className = "meta-percent " + getCor(pG);
-
-            document.getElementById('m-app-val').innerText = mA.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-            document.getElementById('m-app-status').innerText = pA.toFixed(1) + "% atingido";
-            document.getElementById('m-app-status').className = "meta-percent " + getCor(pA);
-
-            document.getElementById('m-ifood-val').innerText = mI.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-            document.getElementById('m-ifood-status').innerText = pI.toFixed(1) + "% atingido";
-            document.getElementById('m-ifood-status').className = "meta-percent " + getCor(pI);
-
-            // Recordes e Destaques
-            let resM = {}; db.forEach(i => resM[i.mes] = (resM[i.mes]||0) + i.vVip + i.vIfood);
-            let melhorM = Object.keys(resM).reduce((a,b)=> resM[a]>resM[b]?a:b);
-            document.getElementById('k-melhor-mes').innerText = melhorM;
-            document.getElementById('k-total-real').innerText = tReal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-
-            let lV = {}, lI = {}; dados.forEach(i => { lV[i.loja]=(lV[i.loja]||0)+i.vVip; lI[i.loja]=(lI[i.loja]||0)+i.vIfood; });
-            
-            // Destaque VIP
-            let topV = Object.keys(lV).reduce((a,b)=>lV[a]>lV[b]?a:b) || "-";
-            document.getElementById('k-top-vip').innerText = topV;
-            document.getElementById('k-top-vip-val').innerText = lV[topV] > 0 ? lV[topV].toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) : "";
-
-            // Destaque IFOOD
-            if (tIfood > 0) {
-                let topI = Object.keys(lI).reduce((a,b)=>lI[a]>lI[b]?a:b);
-                document.getElementById('k-top-ifood').innerText = topI;
-                document.getElementById('k-top-ifood-val').innerText = lI[topI].toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-            } else {
-                document.getElementById('k-top-ifood').innerText = "Sem movimentação";
-                document.getElementById('k-top-ifood-val').innerText = "";
-            }
-
-            // Tabela
-            const tab = {}; dados.forEach(i => {
-                if(!tab[i.loja]) tab[i.loja] = {vV:0, vI:0};
-                tab[i.loja].vV += i.vVip; tab[i.loja].vI += i.vIfood;
+        async function fetchData() {
+            Papa.parse(CSV_URL, {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    globalData = results.data.filter(row => row.Loja || row.loja); // Remove linhas vazias
+                    processData();
+                    document.getElementById('loader').classList.add('hidden');
+                }
             });
-            document.getElementById('tabela-corpo').innerHTML = Object.keys(tab).sort((a,b)=>(tab[b].vV+tab[b].vI)-(tab[a].vV+tab[a].vI)).map(l => {
-                const totalL = tab[l].vV + tab[l].vI;
-                const participacao = mG > 0 ? (totalL / mG) * 100 : 0;
-                return `<tr><td><strong>${l}</strong></td><td class="val-bold">R$ ${tab[l].vV.toLocaleString('pt-BR')}</td><td class="val-bold">R$ ${tab[l].vI.toLocaleString('pt-BR')}</td><td class="val-bold">R$ ${totalL.toLocaleString('pt-BR')}</td><td class="val-bold" style="color:var(--pinheiro-orange)">${participacao.toFixed(2)}%</td></tr>`;
-            }).join('');
         }
-        window.onload = carregar;
+
+        function getVal(obj, keywords) {
+            const key = Object.keys(obj).find(k => keywords.some(kw => k.toLowerCase().includes(kw.toLowerCase())));
+            return key ? obj[key] : 0;
+        }
+
+        function processData() {
+            // Extrair meses únicos
+            const monthSet = new Set();
+            globalData.forEach(row => {
+                const dateVal = getVal(row, ['data', 'mes', 'período']);
+                if(dateVal) monthSet.add(dateVal);
+            });
+            
+            months = Array.from(monthSet);
+            const selector = document.getElementById('monthSelector');
+            months.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                selector.appendChild(opt);
+            });
+
+            updateDashboard('consolidado');
+        }
+
+        function updateDashboard(selectedMonth) {
+            const data = selectedMonth === 'consolidado' 
+                ? globalData 
+                : globalData.filter(row => getVal(row, ['data', 'mes', 'período']) === selectedMonth);
+
+            // 1. Maior Venda (Mês)
+            const salesByMonth = {};
+            globalData.forEach(row => {
+                const m = getVal(row, ['data', 'mes', 'período']);
+                const v = Number(getVal(row, ['venda total', 'venda_total'])) || (Number(getVal(row, ['vip'])) + Number(getVal(row, ['ifood'])));
+                salesByMonth[m] = (salesByMonth[m] || 0) + v;
+            });
+            const topM = Object.keys(salesByMonth).reduce((a, b) => salesByMonth[a] > salesByMonth[b] ? a : b);
+            document.getElementById('topMonth').textContent = topM;
+            document.getElementById('topMonthValue').textContent = `Total: R$ ${salesByMonth[topM].toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+            // 2. Rupturas
+            let rupVip = 0;
+            let rupIfood = 0;
+            data.forEach(row => {
+                rupVip += Number(getVal(row, ['ruptura vip', 'ruptura_vip'])) || 0;
+                rupIfood += Number(getVal(row, ['ruptura ifood', 'ruptura_ifood'])) || 0;
+            });
+            document.getElementById('rupturaVip').textContent = rupVip;
+            document.getElementById('rupturaIfood').textContent = rupIfood;
+
+            // 3. Participação e Melhores Lojas
+            const storeSales = {};
+            const storeVip = {};
+            const storeIfood = {};
+            let totalPeriodo = 0;
+
+            data.forEach(row => {
+                const loja = getVal(row, ['loja', 'unidade']);
+                const vVip = Number(getVal(row, ['venda vip', 'venda_vip'])) || 0;
+                const vIfood = Number(getVal(row, ['venda ifood', 'venda_ifood', 'ifood'])) || 0;
+                const total = vVip + vIfood;
+
+                storeSales[loja] = (storeSales[loja] || 0) + total;
+                storeVip[loja] = (storeVip[loja] || 0) + vVip;
+                storeIfood[loja] = (storeIfood[loja] || 0) + vIfood;
+                totalPeriodo += total;
+            });
+
+            // Renderizar Participação
+            const partList = document.getElementById('participationList');
+            partList.innerHTML = '';
+            Object.keys(storeSales).sort((a,b) => storeSales[b] - storeSales[a]).forEach(loja => {
+                const percent = ((storeSales[loja] / totalPeriodo) * 100).toFixed(1);
+                partList.innerHTML += `
+                    <div class="flex justify-between items-center border-b border-gray-50 pb-1">
+                        <span class="truncate mr-2">${loja}</span>
+                        <span class="font-bold text-green-600">${percent}%</span>
+                    </div>
+                `;
+            });
+
+            // Melhores Lojas por canal
+            const bestVipLoja = Object.keys(storeVip).reduce((a, b) => storeVip[a] > storeVip[b] ? a : b);
+            const bestIfoodLoja = Object.keys(storeIfood).reduce((a, b) => storeIfood[a] > storeIfood[b] ? a : b);
+
+            document.getElementById('bestStoreVip').textContent = bestVipLoja;
+            document.getElementById('bestStoreVipVal').textContent = `R$ ${storeVip[bestVipLoja].toLocaleString('pt-BR')}`;
+            
+            document.getElementById('bestStoreIfood').textContent = bestIfoodLoja;
+            document.getElementById('bestStoreIfoodVal').textContent = `R$ ${storeIfood[bestIfoodLoja].toLocaleString('pt-BR')}`;
+        }
+
+        document.getElementById('monthSelector').addEventListener('change', (e) => {
+            updateDashboard(e.target.value);
+        });
+
+        fetchData();
     </script>
 </body>
 </html>
