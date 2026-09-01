@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Ecommerce Premium</title>
+    <title>Dashboard Ecommerce Oficial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -12,34 +12,29 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #f97316; /* Laranja */
+            background: #f97316; /* Fundo Laranja */
             min-height: 100vh;
             color: white;
+            padding-bottom: 50px;
         }
         .card-blue {
             background: #1e3a8a; /* Azul Marinho */
             color: white;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.1);
-            perspective: 1000px;
         }
-        /* Efeito de movimento 3D */
         .card-blue:hover {
-            transform: translateY(-10px) rotateX(5deg) rotateY(-2deg);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            background: #1e40af;
-            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255,255,255,0.3);
         }
         .glass-header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .sync-badge {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        select { color: #1e3a8a !important; }
+        select { color: #1e3a8a !important; font-weight: bold; }
+        .table-container { background: white; border-radius: 2.5rem; color: #1e293b; overflow: hidden; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -50,7 +45,7 @@
             <div>
                 <h1 class="text-4xl font-extrabold tracking-tighter">Ecommerce Dashboard</h1>
                 <div class="flex items-center mt-2">
-                    <div class="sync-badge px-4 py-1.5 rounded-full flex items-center gap-2">
+                    <div class="bg-black/20 px-4 py-1.5 rounded-full flex items-center gap-2 border border-white/10">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -61,74 +56,86 @@
             </div>
             
             <div class="flex flex-wrap gap-4">
-                <div class="bg-white rounded-2xl px-4 py-2 flex items-center shadow-2xl">
+                <div class="bg-white rounded-2xl px-4 py-2 flex items-center shadow-xl">
                     <span class="text-[10px] font-black text-orange-600 uppercase mr-3">Mês:</span>
-                    <select id="filtro-mes" class="font-bold bg-transparent outline-none cursor-pointer">
+                    <select id="filtro-mes" class="bg-transparent outline-none cursor-pointer">
                         <option value="TODOS">Todos os Meses</option>
                     </select>
                 </div>
 
-                <button onclick="exportarExcel()" class="bg-white hover:bg-blue-50 text-blue-900 px-6 py-2 rounded-2xl font-bold flex items-center transition-all shadow-xl group">
-                    <svg class="w-4 h-4 mr-2 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Exportar Relatório
+                <button onclick="exportarExcel()" class="bg-blue-900 hover:bg-black text-white px-6 py-2 rounded-2xl font-bold flex items-center transition-all shadow-xl">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Exportar Excel
                 </button>
             </div>
         </header>
 
         <!-- Cards de KPI -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
+            <!-- Card Maior Venda -->
+            <div class="card-blue p-7 rounded-[2.5rem] shadow-xl">
                 <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Recorde Mensal</p>
                 <h2 id="kpi-mes" class="text-3xl font-black italic uppercase tracking-tighter">---</h2>
-                <p id="kpi-mes-valor" class="text-blue-200 font-bold mt-2"></p>
+                <p id="kpi-mes-valor" class="text-blue-200 font-bold mt-1 text-sm"></p>
             </div>
 
-            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
+            <!-- Card Líderes -->
+            <div class="card-blue p-7 rounded-[2.5rem] shadow-xl">
                 <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-4">Top Performance</p>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl border border-white/5">
                         <span class="text-[9px] font-bold text-blue-300">VIP</span>
-                        <span id="top-vip" class="text-sm font-black uppercase">---</span>
+                        <span id="top-vip" class="text-xs font-black uppercase">---</span>
                     </div>
-                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl">
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl border border-white/5">
                         <span class="text-[9px] font-bold text-rose-400">IFOOD</span>
-                        <span id="top-ifood" class="text-sm font-black uppercase">---</span>
+                        <span id="top-ifood" class="text-xs font-black uppercase">---</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
-                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Itens Rupturados</p>
-                <div class="flex items-end justify-between">
-                    <span id="rupturas-total" class="text-5xl font-black tracking-tighter">0</span>
-                    <span class="text-xs font-bold text-blue-300 italic mb-2">Total Geral</span>
+            <!-- Card Rupturas (Igual ao Top Performance) -->
+            <div class="card-blue p-7 rounded-[2.5rem] shadow-xl">
+                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-4">Itens Rupturados</p>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl border border-white/5">
+                        <span class="text-[9px] font-bold text-blue-300">CANAL VIP</span>
+                        <span id="rup-vip-total" class="text-sm font-black">0</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl border border-white/5">
+                        <span class="text-[9px] font-bold text-rose-400">CANAL IFOOD</span>
+                        <span id="rup-ifood-total" class="text-sm font-black">0</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
-                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Objetivo (Meta)</p>
+            <!-- Card Meta -->
+            <div class="card-blue p-7 rounded-[2.5rem] shadow-xl">
+                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Atingimento de Meta</p>
                 <h2 id="kpi-meta-percent" class="text-4xl font-black">0%</h2>
-                <div class="w-full bg-black/30 h-2.5 rounded-full mt-4 overflow-hidden">
-                    <div id="meta-bar" class="bg-orange-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_#f97316]" style="width: 0%"></div>
+                <div class="w-full bg-black/30 h-2 rounded-full mt-4 overflow-hidden">
+                    <div id="meta-bar" class="bg-orange-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                 </div>
             </div>
         </div>
 
         <!-- Área de Gráfico e Tabela -->
-        <div class="flex flex-col gap-8 mb-10">
-            <div class="bg-white p-8 rounded-[3rem] shadow-2xl" style="height: 380px;">
+        <div class="flex flex-col gap-8">
+            <!-- Gráfico de Volume (TODAS AS LOJAS) -->
+            <div class="bg-white p-8 rounded-[3rem] shadow-2xl overflow-hidden">
                 <h3 class="text-blue-900 font-black text-sm uppercase tracking-widest mb-6 flex items-center">
-                    <span class="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
-                    Faturamento Bruto por Loja
+                    <span class="w-3 h-3 bg-orange-500 rounded-full mr-3 animate-pulse"></span>
+                    Faturamento Bruto por Loja (Total)
                 </h3>
-                <div class="h-[250px]">
+                <div class="h-[400px] w-full">
                     <canvas id="chartBarras"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden">
-                <div class="p-8 border-b border-slate-100">
-                    <h3 class="text-blue-900 font-black text-sm uppercase tracking-widest italic">Performance Detalhada</h3>
+            <!-- Tabela Detalhada -->
+            <div class="table-container shadow-2xl">
+                <div class="p-8 border-b border-slate-100 bg-slate-50/50">
+                    <h3 class="text-blue-900 font-black text-xs uppercase tracking-widest italic">Performance Detalhada por Unidade</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table id="tabela-dados" class="w-full text-left">
@@ -137,12 +144,12 @@
                                 <th class="px-8 py-5">Unidade / Loja</th>
                                 <th class="px-8 py-5 text-right text-blue-600">Venda VIP</th>
                                 <th class="px-8 py-5 text-right text-rose-500">Venda iFood</th>
-                                <th class="px-8 py-5 text-right text-slate-800">Faturamento Total</th>
+                                <th class="px-8 py-5 text-right text-slate-900">Faturamento Total</th>
                                 <th class="px-8 py-5 text-center">Rupturas</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-corpo" class="text-sm font-bold text-slate-700 divide-y divide-slate-100">
-                            <!-- JS -->
+                        <tbody id="tabela-corpo" class="text-sm font-bold divide-y divide-slate-100">
+                            <!-- Preenchido via Javascript -->
                         </tbody>
                     </table>
                 </div>
@@ -153,93 +160,102 @@
     <script>
         const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYAbzRN6yVIhTqgC17o5QlfH6uU5R8-0Jssq03US8b0R56ab_9ZGPsJr3sJvrlRSWm5AA7YdMINYMt/pub?output=csv';
 
-        let dadosGlobais = [];
-        let chartInstance = null;
+        let dadosBrutos = [];
+        let meuGrafico = null;
 
-        // FUNÇÃO DE LIMPEZA DE NÚMEROS CORRIGIDA
-        function parseNum(valor) {
-            if (!valor) return 0;
-            // Remove R$, espaços e pontos de milhar
-            let limpo = valor.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '');
-            // Troca a vírgula decimal por ponto
-            limpo = limpo.replace(',', '.');
-            return parseFloat(limpo) || 0;
+        // FUNÇÃO DE TRATAMENTO DE NÚMEROS (O SEGREDO!)
+        function limparNumero(valor) {
+            if (!valor || valor === "" || valor === "-") return 0;
+            // Remove R$, espaços e converte formato BR (1.234,56) para US (1234.56)
+            let n = valor.toString().replace(/R\$/g, '').replace(/\s/g, '');
+            if (n.includes('.') && n.includes(',')) n = n.replace(/\./g, '').replace(',', '.');
+            else n = n.replace(',', '.');
+            return parseFloat(n) || 0;
         }
 
-        async function init() {
+        async function carregarDados() {
             try {
-                const res = await fetch(URL_CSV);
-                const csvText = await res.text();
+                const resposta = await fetch(URL_CSV + "&cache=" + Date.now());
+                const texto = await resposta.text();
                 
-                // Detecta se o separador é ; (comum no Brasil) ou ,
-                const delimitador = csvText.indexOf(';') > -1 ? ';' : ',';
-                const linhas = csvText.split('\n').map(l => l.split(delimitador));
+                // Detecta se é ponto e vírgula ou vírgula
+                const separador = texto.includes(';') ? ';' : ',';
+                const linhas = texto.split('\n').map(l => l.split(separador));
                 
-                dadosGlobais = linhas.slice(1).filter(col => col.length > 2);
+                dadosBrutos = linhas.slice(1).filter(col => col.length > 2 && col[1] !== "");
 
-                // Popular Filtro de Mês
-                const mesesUnicos = [...new Set(dadosGlobais.map(c => c[0].trim()))].filter(m => m !== "");
-                const select = document.getElementById('filtro-mes');
-                mesesUnicos.forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = m; opt.innerText = m;
-                    select.appendChild(opt);
+                // Criar filtros de mês
+                const meses = [...new Set(dadosBrutos.map(c => c[0].trim()))].filter(m => m !== "");
+                const combo = document.getElementById('filtro-mes');
+                meses.forEach(m => {
+                    const el = document.createElement('option');
+                    el.value = m; el.innerText = m;
+                    combo.appendChild(el);
                 });
 
-                select.addEventListener('change', () => atualizar(select.value));
-                atualizar("TODOS");
-            } catch (e) { console.error("Erro na carga:", e); }
+                combo.addEventListener('change', () => processarDashboard(combo.value));
+                processarDashboard("TODOS");
+
+            } catch (err) {
+                console.error("Erro fatal ao carregar:", err);
+            }
         }
 
-        function atualizar(mesFiltro) {
-            let lojas = {};
-            let meses = {};
-            let faturamentoGeral = 0;
+        function processarDashboard(mesSelecionado) {
+            let mapaLojas = {};
+            let mapaMeses = {};
+            let totalGeral = 0;
             let metaGeral = 0;
-            let rupturasTotal = 0;
+            let rVipTotal = 0;
+            let rIfoodTotal = 0;
 
-            dadosGlobais.forEach(col => {
+            dadosBrutos.forEach(col => {
                 const mes = col[0].trim();
-                if (mesFiltro !== "TODOS" && mes !== mesFiltro) return;
+                if (mesSelecionado !== "TODOS" && mes !== mesSelecionado) return;
 
-                const nome = col[1].trim();
-                const vVip = parseNum(col[2]);
-                const vIfood = parseNum(col[3]);
-                const meta = parseNum(col[4]); // Meta Geral
-                const rup = parseInt(col[7]) || 0; // Rupturas na coluna H
-                const totalLoja = vVip + vIfood;
-
-                faturamentoGeral += totalLoja;
-                rupturasTotal += rup;
-                // Meta Geral costuma estar repetida, pegamos o valor da linha ou acumulamos se for diferente
+                const nomeLoja = col[1].trim();
+                const vVip = limparNumero(col[2]);
+                const vIfood = limparNumero(col[3]);
+                const meta = limparNumero(col[4]);
+                const rIfood = parseInt(col[7]) || 0; // Coluna H
+                const rVip = parseInt(col[10]) || 0;  // Coluna K (se existir)
+                
+                const totalLinha = vVip + vIfood;
+                totalGeral += totalLinha;
+                rVipTotal += rVip;
+                rIfoodTotal += rIfood;
+                
                 if (meta > metaGeral) metaGeral = meta;
+                mapaMeses[mes] = (mapaMeses[mes] || 0) + totalLinha;
 
-                meses[mes] = (meses[mes] || 0) + totalLoja;
-
-                if (!lojas[nome]) lojas[nome] = { vVip: 0, vIfood: 0, total: 0, rup: 0 };
-                lojas[nome].vVip += vVip;
-                lojas[nome].vIfood += vIfood;
-                lojas[nome].total += totalLoja;
-                lojas[nome].rup += rup;
+                if (!mapaLojas[nomeLoja]) mapaLojas[nomeLoja] = { vVip: 0, vIfood: 0, total: 0, rup: 0 };
+                mapaLojas[nomeLoja].vVip += vVip;
+                mapaLojas[nomeLoja].vIfood += vIfood;
+                mapaLojas[nomeLoja].total += totalLinha;
+                mapaLojas[nomeLoja].rup += rIfood;
             });
 
-            renderizar(lojas, meses, faturamentoGeral, metaGeral, rupturasTotal);
+            atualizarTela(mapaLojas, mapaMeses, totalGeral, metaGeral, rVipTotal, rIfoodTotal);
         }
 
-        function renderizar(lojas, meses, total, meta, rupturas) {
-            // KPIs
+        function atualizarTela(lojas, meses, total, meta, rVip, rIfood) {
+            // Recorde Mensal
             const melhorMes = Object.keys(meses).reduce((a, b) => meses[a] > meses[b] ? a : b, "---");
             document.getElementById('kpi-mes').innerText = melhorMes;
             document.getElementById('kpi-mes-valor').innerText = (meses[melhorMes] || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-            document.getElementById('rupturas-total').innerText = rupturas;
 
-            const percentMeta = meta > 0 ? Math.min((total / meta) * 100, 100).toFixed(1) : 0;
-            document.getElementById('kpi-meta-percent').innerText = percentMeta + '%';
-            document.getElementById('meta-bar').style.width = percentMeta + '%';
+            // Rupturas
+            document.getElementById('rup-vip-total').innerText = rVip;
+            document.getElementById('rup-ifood-total').innerText = rIfood;
+
+            // Meta
+            const perc = meta > 0 ? Math.min((total / meta) * 100, 100).toFixed(1) : 0;
+            document.getElementById('kpi-meta-percent').innerText = perc + '%';
+            document.getElementById('meta-bar').style.width = perc + '%';
 
             // Ranking
             let tVip = {n: '---', v: 0}, tIfood = {n: '---', v: 0};
-            const lista = Object.keys(lojas).map(n => {
+            const listaOrdenada = Object.keys(lojas).map(n => {
                 const l = lojas[n];
                 if(l.vVip > tVip.v) tVip = {n, v: l.vVip};
                 if(l.vIfood > tIfood.v) tIfood = {n, v: l.vIfood};
@@ -250,11 +266,11 @@
             document.getElementById('top-ifood').innerText = tIfood.n;
 
             // Tabela
-            const corpo = document.getElementById('tabela-corpo');
-            corpo.innerHTML = "";
-            lista.forEach(l => {
-                corpo.innerHTML += `
-                    <tr class="hover:bg-blue-50/50 transition-colors">
+            const tbody = document.getElementById('tabela-corpo');
+            tbody.innerHTML = "";
+            listaOrdenada.forEach(l => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-8 py-4 font-black text-blue-900 uppercase text-xs">${l.n}</td>
                         <td class="px-8 py-4 text-right text-blue-600 font-bold">${l.vVip.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
                         <td class="px-8 py-4 text-right text-rose-500 font-bold">${l.vIfood.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
@@ -266,26 +282,28 @@
                 `;
             });
 
-            // Gráfico
-            if (chartInstance) chartInstance.destroy();
+            // Gráfico (MOSTRANDO TODAS AS LOJAS)
+            if (meuGrafico) meuGrafico.destroy();
             const ctx = document.getElementById('chartBarras').getContext('2d');
-            chartInstance = new Chart(ctx, {
+            meuGrafico = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: lista.slice(0, 10).map(l => l.n),
+                    labels: listaOrdenada.map(l => l.n),
                     datasets: [{
-                        data: lista.slice(0, 10).map(l => l.total),
+                        label: 'Venda Total',
+                        data: listaOrdenada.map(l => l.total),
                         backgroundColor: '#1e3a8a',
-                        borderRadius: 15,
-                        barThickness: 30
+                        borderRadius: 8,
+                        hoverBackgroundColor: '#f97316'
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
+                    indexAxis: 'y', // Barras horizontais ficam melhores para muitas lojas
                     plugins: { legend: { display: false } },
                     scales: { 
-                        y: { display: false },
-                        x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' }, color: '#1e3a8a' } }
+                        x: { display: false },
+                        y: { ticks: { font: { size: 9, weight: 'bold' }, color: '#1e3a8a' }, grid: { display: false } }
                     }
                 }
             });
@@ -294,11 +312,11 @@
         function exportarExcel() {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.table_to_sheet(document.getElementById('tabela-dados'));
-            XLSX.utils.book_append_sheet(wb, ws, "Dashboard");
-            XLSX.utils.writeFile(wb, "Relatorio_Vendas.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Relatório");
+            XLSX.utils.writeFile(wb, "Dashboard_Ecommerce.xlsx");
         }
 
-        init();
+        carregarDados();
     </script>
 </body>
 </html>
