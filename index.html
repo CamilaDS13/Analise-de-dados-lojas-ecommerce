@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA PINHEIRO | PERFORMANCE & METAS</title>
+    <title>SISTEMA PINHEIRO | PERFORMANCE E-COMMERCE</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
             --bg-body: #0a0a0c; --card-bg: #1c1c1e;
             --pinheiro-blue: #2b2d84; --pinheiro-orange: #f38218; --pinheiro-green: #22c55e;
             --pinheiro-red: #ef4444;
-            --text-main: #ffffff; --text-dim: #a1a1aa; --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff; --text-muted: #a1a1aa; --border: rgba(255, 255, 255, 0.1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-body); color: var(--text-main); padding: 30px; }
@@ -20,24 +20,37 @@
 
         header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
         .title-group h1 { font-size: 26px; font-weight: 800; text-transform: uppercase; }
-        .status-pills { display: flex; gap: 15px; margin-top: 15px; }
-        .pill { background: var(--card-bg); padding: 10px 20px; border-radius: 50px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pinheiro-orange); }
+        .status-box { display: flex; align-items: center; gap: 15px; margin-top: 15px; }
+        .pill { background: var(--card-bg); padding: 8px 16px; border-radius: 50px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #555; }
         .dot.online { background: var(--pinheiro-green); box-shadow: 0 0 10px var(--pinheiro-green); }
 
+        /* Meta Cards com Semáforo */
         .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
         .card-meta { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); text-align: center; }
-        .meta-label { font-size: 12px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
-        .meta-value { font-size: 28px; font-weight: 800; margin: 10px 0; display: block; }
-        .meta-percent { font-size: 14px; font-weight: 700; padding: 5px 15px; border-radius: 50px; display: inline-block; margin-top: 10px; }
+        .meta-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .meta-value { font-size: 24px; font-weight: 800; margin: 8px 0; display: block; }
+        .meta-percent { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 50px; display: inline-block; }
         
-        .bg-red { background: rgba(239, 68, 68, 0.15); color: var(--pinheiro-red); border: 1px solid var(--pinheiro-red); }
-        .bg-orange { background: rgba(243, 130, 24, 0.15); color: var(--pinheiro-orange); border: 1px solid var(--pinheiro-orange); }
-        .bg-green { background: rgba(34, 197, 94, 0.15); color: var(--pinheiro-green); border: 1px solid var(--pinheiro-green); }
+        .bg-red { background: rgba(239, 68, 68, 0.1); color: var(--pinheiro-red); border: 1px solid var(--pinheiro-red); }
+        .bg-orange { background: rgba(243, 130, 24, 0.1); color: var(--pinheiro-orange); border: 1px solid var(--pinheiro-orange); }
+        .bg-green { background: rgba(34, 197, 94, 0.1); color: var(--pinheiro-green); border: 1px solid var(--pinheiro-green); }
 
-        .table-section { background: var(--card-bg); padding: 25px; border-radius: 24px; border: 1px solid var(--border); overflow-x: auto; }
+        /* KPIs */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card-kpi { background: var(--card-bg); padding: 20px; border-radius: 24px; border: 1px solid var(--border); }
+        .kpi-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .kpi-val { font-size: 18px; font-weight: 800; margin-top: 5px; display: block; }
+
+        /* Rupturas */
+        .ruptura-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .rup-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .rup-name { color: var(--pinheiro-orange); font-weight: 800; font-size: 13px; text-transform: uppercase; }
+
+        /* Tabela */
+        .table-section { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { text-align: left; padding: 15px; background: #111827; color: var(--text-dim); border: 1px solid var(--border); }
+        th { text-align: left; padding: 15px; background: #111827; color: var(--text-muted); border: 1px solid var(--border); text-transform: uppercase; }
         td { padding: 12px 15px; border: 1px solid var(--border); }
         tr:nth-child(even) { background: rgba(255,255,255,0.02); }
         .val-bold { font-family: 'Courier New', monospace; font-weight: bold; text-align: right; }
@@ -50,184 +63,189 @@
     <div class="container">
         <header>
             <div class="title-group">
-                <p style="color: var(--pinheiro-orange); font-weight: bold; font-size: 12px; letter-spacing: 2px;">BOM VIZINHO DATA HUB</p>
-                <h1>Análise de Metas E-commerce</h1>
-                <div class="status-pills">
-                    <div class="pill"><div id="status-dot" class="dot"></div> <span id="status-text">Sincronizando...</span></div>
-                    <select id="mesSelect" onchange="atualizarDashboard()"><option value="consolidado">Consolidado Anual</option></select>
+                <p style="color: var(--pinheiro-orange); font-weight: bold; font-size: 11px; letter-spacing: 2px;">PINHEIRO HUB OPERACIONAL</p>
+                <h1>Análise de Metas & Canais</h1>
+                <div class="status-box">
+                    <div class="pill"><div id="dot" class="dot"></div> <span id="status-text">Conectando...</span></div>
+                    <select id="mesSelect" onchange="renderizar()"><option value="all">Consolidado 2026</option></select>
                 </div>
             </div>
-            <img src="https://raw.githubusercontent.com/CamilaDS13/imagens/Principal/logobranca.png" style="height: 45px;">
+            <img src="https://raw.githubusercontent.com/CamilaDS13/imagens/Principal/logobranca.png" style="height: 40px;">
         </header>
 
+        <!-- CARDS DE METAS (SEMÁFORO) -->
         <div class="meta-grid">
             <div class="card-meta">
-                <span class="meta-label">Realizado Geral</span>
-                <span id="meta-geral-val" class="meta-value">R$ 0,00</span>
-                <div id="meta-geral-pct" class="meta-percent">0% atingido</div>
+                <span class="meta-label">Meta Geral Empresa</span>
+                <span id="m-geral-val" class="meta-value">R$ 0,00</span>
+                <div id="m-geral-pct" class="meta-percent">0% atingido</div>
             </div>
             <div class="card-meta">
-                <span class="meta-label">Realizado VIP (App)</span>
-                <span id="meta-app-val" class="meta-value">R$ 0,00</span>
-                <div id="meta-app-pct" class="meta-percent">0% atingido</div>
+                <span class="meta-label">Meta Aplicativo (VIP)</span>
+                <span id="m-app-val" class="meta-value">R$ 0,00</span>
+                <div id="m-app-pct" class="meta-percent">0% atingido</div>
             </div>
             <div class="card-meta">
-                <span class="meta-label">Realizado IFood</span>
-                <span id="meta-ifood-val" class="meta-value">R$ 0,00</span>
-                <div id="meta-ifood-pct" class="meta-percent">0% atingido</div>
+                <span class="meta-label">Meta IFood</span>
+                <span id="m-ifood-val" class="meta-value">R$ 0,00</span>
+                <div id="m-ifood-pct" class="meta-percent">0% atingido</div>
             </div>
         </div>
 
+        <!-- KPIs DE APOIO -->
+        <div class="metrics-grid">
+            <div class="card-kpi"><span class="kpi-title">Mês Recorde de Venda</span><span id="k-melhor-mes" class="kpi-val">-</span></div>
+            <div class="card-kpi"><span class="kpi-title">Loja Destaque VIP</span><span id="k-loja-vip" class="kpi-val">-</span></div>
+            <div class="card-kpi"><span class="kpi-title">Loja Destaque IFOOD</span><span id="k-loja-ifood" class="kpi-val">-</span></div>
+            <div class="card-kpi"><span class="kpi-title">Venda Realizada (Canais)</span><span id="k-realizado" class="kpi-val">R$ 0,00</span></div>
+        </div>
+
+        <!-- RUPTURAS -->
+        <div class="ruptura-section">
+            <div class="rup-card">
+                <div><span class="rup-name">Ruptura VIP</span><div id="r-vip-q" style="font-size:20px; font-weight:800">0 itens</div></div>
+                <div style="text-align:right"><span class="kpi-title">Venda Perdida</span><div id="r-vip-v" style="color:var(--pinheiro-red); font-weight:800">R$ 0,00</div></div>
+            </div>
+            <div class="rup-card">
+                <div><span class="rup-name">Ruptura IFOOD</span><div id="r-ifood-q" style="font-size:20px; font-weight:800">0 itens</div></div>
+                <div style="text-align:right"><span class="kpi-title">Venda Perdida</span><div id="r-ifood-v" style="color:var(--pinheiro-red); font-weight:800">R$ 0,00</div></div>
+            </div>
+        </div>
+
+        <!-- TABELA -->
         <div class="table-section">
-            <h3 style="margin-bottom: 15px; font-size: 14px; color: var(--text-dim);">DESEMPENHO POR LOJA</h3>
-            <table id="mainTable">
+            <h3 style="margin-bottom:15px; font-size:13px; color:var(--text-muted)">PARTICIPAÇÃO DAS LOJAS NA VENDA GERAL DA EMPRESA</h3>
+            <table>
                 <thead>
                     <tr>
-                        <th style="width:220px">Loja</th>
+                        <th style="width:250px">Unidade / Loja</th>
                         <th class="val-bold">Venda VIP</th><th class="val-bold">Venda IFOOD</th>
-                        <th class="val-bold">Venda Total</th><th class="val-bold" style="color:var(--pinheiro-orange)">% Part. Empresa</th>
+                        <th class="val-bold">Realizado Canais</th><th class="val-bold" style="color:var(--pinheiro-orange)">% Part. Empresa</th>
                     </tr>
                 </thead>
-                <tbody id="table-body"></tbody>
+                <tbody id="tabela-corpo"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        const SHEET_ID = '1PfUPSIDHoTx_ul0LPS7hXU8uayYQ73PclFnz60T9K3w';
-        const URL_DADOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=xlsx`;
-
-        let rawData = [];
+        const URL_PUBLICA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYAbzRN6yVIhTqgC17o5QlfH6uU5R8-0Jssq03US8b0R56ab_9ZGPsJr3sJvrlRSWm5AA7YdMINYMt/pub?output=csv";
+        let db = [];
         const ordemMeses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
 
-        async function carregarDados() {
+        async function carregar() {
             try {
-                const response = await fetch(URL_DADOS + "&t=" + new Date().getTime());
-                if (!response.ok) throw new Error("Acesso negado");
+                const r = await fetch(URL_PUBLICA + "&cache=" + new Date().getTime());
+                const t = await r.text();
+                const wb = XLSX.read(t, { type: 'string' });
+                const sheet = wb.Sheets[wb.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
                 
-                const arrayBuffer = await response.arrayBuffer();
-                const data = new Uint8Array(arrayBuffer);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
-
-                if (rows.length > 0) {
-                    processarDadosDinamicos(rows);
-                    document.getElementById('status-dot').className = "dot online";
-                    document.getElementById('status-text').innerText = "Sistema Online";
-                }
-            } catch (e) { 
-                document.getElementById('status-text').innerText = "Erro: Abra via GitHub link";
-                console.error(e);
-            }
+                processar(rows);
+                document.getElementById('dot').className = "dot online";
+                document.getElementById('status-text').innerText = "Sincronizado";
+            } catch (e) { document.getElementById('status-text').innerText = "Erro ao conectar"; }
         }
 
-        function limpar(v) {
-            if (v === undefined || v === null || v === "") return 0;
-            if (typeof v === 'number') return v;
-            let n = v.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
-            return parseFloat(n) || 0;
+        function n(v) {
+            if(!v) return 0;
+            if(typeof v === 'number') return v;
+            return parseFloat(v.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.')) || 0;
         }
 
-        function processarDadosDinamicos(rows) {
-            // Acha a linha do cabeçalho
-            let hIdx = rows.findIndex(r => r.some(c => c && c.toString().toLowerCase().includes("loja")));
-            if (hIdx === -1) hIdx = 0;
-            const header = rows[hIdx].map(h => h ? h.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "");
+        function processar(rows) {
+            const head = rows[0].map(h => h.toString().toUpperCase());
+            const iMes = head.indexOf("DATA");
+            const iLoja = head.indexOf("LOJA");
+            const iVip = head.indexOf("VENDA VIP");
+            const iIfood = head.indexOf("VENDA IFOOD");
+            const iMetaG = head.indexOf("META GERAL");
+            const iMetaA = head.indexOf("META APLICATIVO");
+            const iMetaI = head.indexOf("META IFOOD");
+            const iGeralE = head.indexOf("VENDA GERAL");
+            const iRIQ = head.indexOf("QTD ITENS RUPTURADOS IFOOD");
+            const iRIV = head.indexOf("VENDA PERDIDA POR RUPTURA NO IFOOD");
+            const iRVQ = head.indexOf("QTD DE ITENS RUPTURADOS NA VIP");
+            const iRVV = head.indexOf("VENDA PERDIDA POR RUPTURA NA VIP");
 
-            // Mapeia colunas por nome
-            const idxMes = header.findIndex(h => h.includes("data") || h.includes("mes"));
-            const idxLoja = header.findIndex(h => h.includes("loja"));
-            const idxVip = header.findIndex(h => h.includes("venda vip") || h.includes("venda aplicativo"));
-            const idxIfood = header.findIndex(h => h.includes("venda ifood"));
-            const idxMetaG = header.findIndex(h => h.includes("meta geral"));
-            const idxMetaA = header.findIndex(h => h.includes("meta aplicativo"));
-            const idxMetaI = header.findIndex(h => h.includes("meta ifood"));
+            db = rows.slice(1).filter(r => r[iLoja]).map(r => ({
+                mes: r[iMes].toString().toUpperCase().trim(),
+                loja: r[iLoja],
+                vVip: n(r[iVip]), vIfood: n(r[iIfood]),
+                mG: n(r[iMetaG]), mA: n(r[iMetaA]), mI: n(r[iMetaI]),
+                vGE: n(r[iGeralE]),
+                rIQ: parseInt(r[iRIQ])||0, rIV: n(r[iRIV]),
+                rVQ: parseInt(r[iRVQ])||0, rVV: n(r[iRVV])
+            }));
 
-            rawData = rows.slice(hIdx + 1).map(r => {
-                if(!r[idxLoja]) return null;
-                return {
-                    mes: (r[idxMes] || "").toString().toUpperCase().trim(),
-                    loja: r[idxLoja],
-                    vVip: limpar(r[idxVip]),
-                    vIfood: limpar(r[idxIfood]),
-                    mGeral: limpar(r[idxMetaG]),
-                    mApp: limpar(r[idxMetaA]),
-                    mIfood: limpar(r[idxMetaI])
-                };
-            }).filter(i => i !== null);
+            const meses = [...new Set(db.map(i => i.mes))].sort((a,b) => ordemMeses.indexOf(a) - ordemMeses.indexOf(b));
+            const sel = document.getElementById('mesSelect');
+            meses.forEach(m => sel.innerHTML += `<option value="${m}">${m}</option>`);
+            renderizar();
+        }
 
-            const meses = [...new Set(rawData.map(i => i.mes))].sort((a,b) => ordemMeses.indexOf(a) - ordemMeses.indexOf(b));
-            const select = document.getElementById('mesSelect');
-            meses.forEach(m => {
-                if(m && m !== "DATA") {
-                    const opt = document.createElement('option');
-                    opt.value = m; opt.textContent = m;
-                    select.appendChild(opt);
-                }
+        function getCor(p) { return p >= 100 ? 'bg-green' : p >= 80 ? 'bg-orange' : 'bg-red'; }
+
+        function renderizar() {
+            const f = document.getElementById('mesSelect').value;
+            const dados = f === 'all' ? db : db.filter(i => i.mes === f);
+
+            const tVip = dados.reduce((a,b)=>a+b.vVip,0);
+            const tIfood = dados.reduce((a,b)=>a+b.vIfood,0);
+            const tGE = dados.reduce((a,b)=>a+b.vGE,0);
+            const tReal = tVip + tIfood;
+
+            // Metas
+            let mG=0, mA=0, mI=0;
+            if(f === 'all') {
+                let mMes = {}; db.forEach(i => { if(!mMes[i.mes]) mMes[i.mes] = {g:i.mG, a:i.mA, i:i.mI}; });
+                mG = Object.values(mMes).reduce((a,b)=>a+b.g,0);
+                mA = Object.values(mMes).reduce((a,b)=>a+b.a,0);
+                mI = Object.values(mMes).reduce((a,b)=>a+b.i,0);
+            } else { mG = dados[0].mG; mA = dados[0].mA; mI = dados[0].mI; }
+
+            const pG = (tReal/mG*100)||0; const pA = (tVip/mA*100)||0; const pI = (tIfood/mI*100)||0;
+
+            document.getElementById('m-geral-val').innerText = mG.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('m-geral-pct').innerText = pG.toFixed(1) + "% atingido";
+            document.getElementById('m-geral-pct').className = "meta-percent " + getCor(pG);
+
+            document.getElementById('m-app-val').innerText = mA.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('m-app-pct').innerText = pA.toFixed(1) + "% atingido";
+            document.getElementById('m-app-pct').className = "meta-percent " + getCor(pA);
+
+            document.getElementById('m-ifood-val').innerText = mI.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('m-ifood-pct').innerText = pI.toFixed(1) + "% atingido";
+            document.getElementById('m-ifood-pct').className = "meta-percent " + getCor(pI);
+
+            // Melhor Mes
+            let resM = {}; db.forEach(i => resM[i.mes] = (resM[i.mes]||0) + i.vVip + i.vIfood);
+            let melhorM = Object.keys(resM).reduce((a,b)=> resM[a]>resM[b]?a:b);
+            document.getElementById('k-melhor-mes').innerText = melhorM + " (R$ " + resM[melhorM].toLocaleString('pt-BR') + ")";
+
+            // Top Lojas
+            let lV = {}, lI = {}; dados.forEach(i => { lV[i.loja]=(lV[i.loja]||0)+i.vVip; lI[i.loja]=(lI[i.loja]||0)+i.vIfood; });
+            document.getElementById('k-loja-vip').innerText = Object.keys(lV).reduce((a,b)=>lV[a]>lV[b]?a:b) || "-";
+            document.getElementById('k-loja-ifood').innerText = Object.keys(lI).reduce((a,b)=>lI[a]>lI[b]?a:b) || "-";
+            document.getElementById('k-realizado').innerText = tReal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
+            // Rupturas
+            document.getElementById('r-vip-q').innerText = dados.reduce((a,b)=>a+b.rVQ,0).toLocaleString('pt-BR') + " itens";
+            document.getElementById('r-vip-v').innerText = dados.reduce((a,b)=>a+b.rVV,0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('r-ifood-q').innerText = dados.reduce((a,b)=>a+b.rIQ,0).toLocaleString('pt-BR') + " itens";
+            document.getElementById('r-ifood-v').innerText = dados.reduce((a,b)=>a+b.rIV,0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
+            // Tabela
+            const tab = {}; dados.forEach(i => {
+                if(!tab[i.loja]) tab[i.loja] = {vV:0, vI:0};
+                tab[i.loja].vV += i.vVip; tab[i.loja].vI += i.vIfood;
             });
-            
-            atualizarDashboard();
+            document.getElementById('tabela-corpo').innerHTML = Object.keys(tab).sort((a,b)=>(tab[b].vV+tab[b].vI)-(tab[a].vV+tab[a].vI)).map(l => {
+                const totalL = tab[l].vV + tab[l].vI;
+                return `<tr><td><strong>${l}</strong></td><td class="val-bold">R$ ${tab[l].vV.toLocaleString('pt-BR')}</td><td class="val-bold">R$ ${tab[l].vI.toLocaleString('pt-BR')}</td><td class="val-bold">R$ ${totalL.toLocaleString('pt-BR')}</td><td class="val-bold" style="color:var(--pinheiro-orange)">${((totalL/tGE)*100||0).toFixed(2)}%</td></tr>`;
+            }).join('');
         }
-
-        function definirCorMeta(percentual) {
-            if (percentual >= 100) return 'bg-green';
-            if (percentual >= 80) return 'bg-orange';
-            return 'bg-red';
-        }
-
-        function atualizarDashboard() {
-            const filtro = document.getElementById('mesSelect').value;
-            let dados = filtro === 'consolidado' ? rawData : rawData.filter(i => i.mes === filtro);
-            
-            const totalVIP = dados.reduce((a,b) => a + b.vVip, 0);
-            const totalIFood = dados.reduce((a,b) => a + b.vIfood, 0);
-            const realizadoTotal = totalVIP + totalIFood;
-
-            let metaGeral, metaApp, metaIfood;
-            if (filtro === 'consolidado') {
-                let metasMes = {};
-                rawData.forEach(i => { if(!metasMes[i.mes]) metasMes[i.mes] = {g:i.mGeral, a:i.mApp, f:i.mIfood}; });
-                metaGeral = Object.values(metasMes).reduce((a,b) => a + b.g, 0);
-                metaApp = Object.values(metasMes).reduce((a,b) => a + b.a, 0);
-                metaIfood = Object.values(metasMes).reduce((a,b) => a + b.f, 0);
-            } else {
-                metaGeral = dados[0] ? dados[0].mGeral : 0;
-                metaApp = dados[0] ? dados[0].mApp : 0;
-                metaIfood = dados[0] ? dados[0].mIfood : 0;
-            }
-
-            atualizarCardMeta('meta-geral', realizadoTotal, (realizadoTotal/metaGeral*100)||0);
-            atualizarCardMeta('meta-app', totalVIP, (totalVIP/metaApp*100)||0);
-            atualizarCardMeta('meta-ifood', totalIFood, (totalIFood/metaIfood*100)||0);
-
-            const lojasT = {};
-            dados.forEach(i => {
-                if(!lojasT[i.loja]) lojasT[i.loja] = { vV:0, vI:0, vT:0 };
-                lojasT[i.loja].vV += i.vVip;
-                lojasT[i.loja].vI += i.vIfood;
-                lojasT[i.loja].vT += (i.vVip + i.vIfood);
-            });
-
-            document.getElementById('table-body').innerHTML = Object.keys(lojasT).sort((a,b) => lojasT[b].vT - lojasT[a].vT).map(l => `
-                <tr>
-                    <td><strong>${l}</strong></td>
-                    <td class="val-bold">R$ ${lojasT[l].vV.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
-                    <td class="val-bold">R$ ${lojasT[l].vI.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
-                    <td class="val-bold">R$ ${lojasT[l].vT.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
-                    <td class="val-bold" style="color:var(--pinheiro-orange)">${((lojasT[l].vT/realizadoTotal)*100 || 0).toFixed(2)}%</td>
-                </tr>
-            `).join('');
-        }
-
-        function atualizarCardMeta(id, valor, percent) {
-            document.getElementById(`${id}-val`).innerText = valor.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-            const elPct = document.getElementById(`${id}-pct`);
-            elPct.innerText = percent.toFixed(1) + "% atingido";
-            elPct.className = "meta-percent " + definirCorMeta(percent);
-        }
-
-        window.onload = carregarDados;
+        window.onload = carregar;
     </script>
 </body>
 </html>
