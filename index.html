@@ -29,7 +29,7 @@
         .card-meta { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); text-align: center; }
         .meta-label { font-size: 12px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
         .meta-value { font-size: 28px; font-weight: 800; margin: 10px 0; display: block; }
-        .meta-percent { font-size: 14px; font-weight: 700; padding: 5px 15px; border-radius: 50px; display: inline-block; }
+        .meta-percent { font-size: 14px; font-weight: 700; padding: 5px 15px; border-radius: 50px; display: inline-block; margin-top: 10px; }
         
         .bg-red { background: rgba(239, 68, 68, 0.15); color: var(--pinheiro-red); border: 1px solid var(--pinheiro-red); }
         .bg-orange { background: rgba(243, 130, 24, 0.15); color: var(--pinheiro-orange); border: 1px solid var(--pinheiro-orange); }
@@ -42,7 +42,7 @@
         tr:nth-child(even) { background: rgba(255,255,255,0.02); }
         .val-bold { font-family: 'Courier New', monospace; font-weight: bold; text-align: right; }
 
-        select { background: #000; color: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 50px; cursor: pointer; }
+        select { background: #000; color: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 50px; cursor: pointer; outline: none; }
     </style>
 </head>
 <body>
@@ -62,23 +62,24 @@
 
         <div class="meta-grid">
             <div class="card-meta">
-                <span class="meta-label">Atingimento Geral</span>
+                <span class="meta-label">Realizado Geral</span>
                 <span id="meta-geral-val" class="meta-value">R$ 0,00</span>
                 <div id="meta-geral-pct" class="meta-percent">0% atingido</div>
             </div>
             <div class="card-meta">
-                <span class="meta-label">Atingimento VIP (App)</span>
+                <span class="meta-label">Realizado VIP (App)</span>
                 <span id="meta-app-val" class="meta-value">R$ 0,00</span>
                 <div id="meta-app-pct" class="meta-percent">0% atingido</div>
             </div>
             <div class="card-meta">
-                <span class="meta-label">Atingimento IFood</span>
+                <span class="meta-label">Realizado IFood</span>
                 <span id="meta-ifood-val" class="meta-value">R$ 0,00</span>
                 <div id="meta-ifood-pct" class="meta-percent">0% atingido</div>
             </div>
         </div>
 
         <div class="table-section">
+            <h3 style="margin-bottom: 15px; font-size: 14px; color: var(--text-dim);">DESEMPENHO POR LOJA</h3>
             <table id="mainTable">
                 <thead>
                     <tr>
@@ -93,7 +94,6 @@
     </div>
 
     <script>
-        // NOVO ID DA PLANILHA DE METAS
         const SHEET_ID = '1PfUPSIDHoTx_ul0LPS7hXU8uayYQ73PclFnz60T9K3w';
         const URL_DADOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=xlsx`;
 
@@ -103,18 +103,23 @@
         async function carregarDados() {
             try {
                 const response = await fetch(URL_DADOS + "&t=" + new Date().getTime());
+                if (!response.ok) throw new Error("Acesso negado");
+                
                 const arrayBuffer = await response.arrayBuffer();
                 const data = new Uint8Array(arrayBuffer);
                 const workbook = XLSX.read(data, { type: 'array' });
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
 
-                if (rows.length > 1) {
-                    processarDados(rows);
+                if (rows.length > 0) {
+                    processarDadosDinamicos(rows);
                     document.getElementById('status-dot').className = "dot online";
-                    document.getElementById('status-text').innerText = "Dados Atualizados";
+                    document.getElementById('status-text').innerText = "Sistema Online";
                 }
-            } catch (e) { document.getElementById('status-text').innerText = "Erro ao buscar dados"; }
+            } catch (e) { 
+                document.getElementById('status-text').innerText = "Erro: Abra via GitHub link";
+                console.error(e);
+            }
         }
 
         function limpar(v) {
@@ -124,25 +129,42 @@
             return parseFloat(n) || 0;
         }
 
-        function processarDados(rows) {
-            // Mapeamento baseado no seu print das colunas: 0:Data, 1:Loja, 2:Vip, 3:Ifood, 4:MetaG, 5:MetaA, 6:MetaI
-            rawData = rows.slice(1).map(r => {
-                if(!r[1]) return null;
+        function processarDadosDinamicos(rows) {
+            // Acha a linha do cabeçalho
+            let hIdx = rows.findIndex(r => r.some(c => c && c.toString().toLowerCase().includes("loja")));
+            if (hIdx === -1) hIdx = 0;
+            const header = rows[hIdx].map(h => h ? h.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "");
+
+            // Mapeia colunas por nome
+            const idxMes = header.findIndex(h => h.includes("data") || h.includes("mes"));
+            const idxLoja = header.findIndex(h => h.includes("loja"));
+            const idxVip = header.findIndex(h => h.includes("venda vip") || h.includes("venda aplicativo"));
+            const idxIfood = header.findIndex(h => h.includes("venda ifood"));
+            const idxMetaG = header.findIndex(h => h.includes("meta geral"));
+            const idxMetaA = header.findIndex(h => h.includes("meta aplicativo"));
+            const idxMetaI = header.findIndex(h => h.includes("meta ifood"));
+
+            rawData = rows.slice(hIdx + 1).map(r => {
+                if(!r[idxLoja]) return null;
                 return {
-                    mes: (r[0] || "").toString().toUpperCase().trim(),
-                    loja: r[1],
-                    vVip: limpar(r[2]),
-                    vIfood: limpar(r[3]),
-                    mGeral: limpar(r[4]),
-                    mApp: limpar(r[5]),
-                    mIfood: limpar(r[6])
+                    mes: (r[idxMes] || "").toString().toUpperCase().trim(),
+                    loja: r[idxLoja],
+                    vVip: limpar(r[idxVip]),
+                    vIfood: limpar(r[idxIfood]),
+                    mGeral: limpar(r[idxMetaG]),
+                    mApp: limpar(r[idxMetaA]),
+                    mIfood: limpar(r[idxMetaI])
                 };
             }).filter(i => i !== null);
 
             const meses = [...new Set(rawData.map(i => i.mes))].sort((a,b) => ordemMeses.indexOf(a) - ordemMeses.indexOf(b));
             const select = document.getElementById('mesSelect');
             meses.forEach(m => {
-                if(m && m !== "DATA") select.innerHTML += `<option value="${m}">${m}</option>`;
+                if(m && m !== "DATA") {
+                    const opt = document.createElement('option');
+                    opt.value = m; opt.textContent = m;
+                    select.appendChild(opt);
+                }
             });
             
             atualizarDashboard();
@@ -170,9 +192,9 @@
                 metaApp = Object.values(metasMes).reduce((a,b) => a + b.a, 0);
                 metaIfood = Object.values(metasMes).reduce((a,b) => a + b.f, 0);
             } else {
-                metaGeral = dados[0].mGeral;
-                metaApp = dados[0].mApp;
-                metaIfood = dados[0].mIfood;
+                metaGeral = dados[0] ? dados[0].mGeral : 0;
+                metaApp = dados[0] ? dados[0].mApp : 0;
+                metaIfood = dados[0] ? dados[0].mIfood : 0;
             }
 
             atualizarCardMeta('meta-geral', realizadoTotal, (realizadoTotal/metaGeral*100)||0);
