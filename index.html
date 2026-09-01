@@ -15,23 +15,35 @@
             --border: rgba(255, 255, 255, 0.1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 20px; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px; }
         .container { max-width: 1450px; margin: 0 auto; }
 
         header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
-        .title-group h1 { font-size: 24px; font-weight: 800; text-transform: uppercase; }
+        .title-group h1 { font-size: 26px; font-weight: 800; text-transform: uppercase; }
         .status-box { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
         .pill { background: var(--card-bg); padding: 8px 16px; border-radius: 50px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #555; }
         .dot.online { background: var(--pinheiro-green); box-shadow: 0 0 10px var(--pinheiro-green); }
 
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        /* Meta Cards */
+        .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
+        .card-meta { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); text-align: center; }
+        .meta-label { font-size: 11px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
+        .meta-value { font-size: 24px; font-weight: 800; margin: 8px 0; display: block; }
+        .meta-status { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 50px; display: inline-block; }
+        
+        .bg-red { background: rgba(239, 68, 68, 0.1); color: var(--pinheiro-red); border: 1px solid var(--pinheiro-red); }
+        .bg-orange { background: rgba(243, 130, 24, 0.1); color: var(--pinheiro-orange); border: 1px solid var(--pinheiro-orange); }
+        .bg-green { background: rgba(34, 197, 94, 0.1); color: var(--pinheiro-green); border: 1px solid var(--pinheiro-green); }
+
+        /* KPIs */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px; }
         .card-kpi { background: var(--card-bg); padding: 20px; border-radius: 24px; border: 1px solid var(--border); }
         .kpi-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; }
-        .kpi-value { font-size: 20px; font-weight: 800; margin-top: 8px; display: block; }
-        .kpi-sub { font-size: 11px; margin-top: 5px; color: var(--pinheiro-green); font-weight: 600; }
+        .kpi-value { font-size: 18px; font-weight: 800; margin-top: 5px; display: block; }
 
-        .ruptura-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        /* Rupturas */
+        .ruptura-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
         .rup-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
         .rup-title { color: var(--pinheiro-orange); font-weight: 800; font-size: 13px; text-transform: uppercase; }
 
@@ -51,7 +63,7 @@
         <header>
             <div class="title-group">
                 <p style="color: var(--pinheiro-orange); font-weight: bold; font-size: 11px; letter-spacing: 2px;">PINHEIRO HUB OPERACIONAL</p>
-                <h1>Análise de Vendas & Ruptura E-commerce</h1>
+                <h1>Análise de Metas & Performance</h1>
                 <div class="status-box">
                     <div class="pill"><div id="dot" class="dot"></div> <span id="status-text">Sincronizando...</span></div>
                     <select id="mesSelect" onchange="renderizar()"><option value="all">Consolidado Anual</option></select>
@@ -60,11 +72,30 @@
             <img src="https://raw.githubusercontent.com/CamilaDS13/imagens/Principal/logobranca.png" style="height: 40px;">
         </header>
 
+        <!-- CARDS DE METAS -->
+        <div class="meta-grid">
+            <div class="card-meta">
+                <span class="meta-label">Meta Geral</span>
+                <span id="m-geral-val" class="meta-value">R$ 0,00</span>
+                <div id="m-geral-status" class="meta-status">0% atingido</div>
+            </div>
+            <div class="card-meta">
+                <span class="meta-label">Meta VIP (App)</span>
+                <span id="m-app-val" class="meta-value">R$ 0,00</span>
+                <div id="m-app-status" class="meta-status">0% atingido</div>
+            </div>
+            <div class="card-meta">
+                <span class="meta-label">Meta IFood</span>
+                <span id="m-ifood-val" class="meta-value">R$ 0,00</span>
+                <div id="m-ifood-status" class="meta-status">0% atingido</div>
+            </div>
+        </div>
+
         <div class="metrics-grid">
-            <div class="card-kpi"><span class="kpi-label">Mês de Maior Venda</span><span id="k-melhor-mes" class="kpi-value">-</span><span id="k-melhor-mes-val" class="kpi-sub"></span></div>
-            <div class="card-kpi"><span class="kpi-label">Loja Campeã VIP</span><span id="k-top-vip" class="kpi-value">-</span><span id="k-top-vip-val" class="kpi-sub"></span></div>
-            <div class="card-kpi"><span class="kpi-label">Loja Campeã IFOOD</span><span id="k-top-ifood" class="kpi-value">-</span><span id="k-top-ifood-val" class="kpi-sub"></span></div>
-            <div class="card-kpi"><span class="kpi-label">Venda Total Canais</span><span id="k-venda-total" class="kpi-value">R$ 0,00</span><span class="kpi-sub" style="color: var(--text-dim)">Somatório VIP + IFOOD</span></div>
+            <div class="card-kpi"><span class="kpi-label">Mês Maior Venda</span><span id="k-melhor-mes" class="kpi-value">-</span></div>
+            <div class="card-kpi"><span class="kpi-label">Top Loja VIP</span><span id="k-top-vip" class="kpi-value">-</span></div>
+            <div class="card-kpi"><span class="kpi-label">Top Loja IFOOD</span><span id="k-top-ifood" class="kpi-value">-</span></div>
+            <div class="card-kpi"><span class="kpi-label">Realizado Canais</span><span id="k-total-real" class="kpi-value">R$ 0,00</span></div>
         </div>
 
         <div class="ruptura-grid">
@@ -79,13 +110,13 @@
         </div>
 
         <div class="table-section">
-            <h3 style="margin-bottom:15px; font-size:13px; color:var(--text-dim)">PARTICIPAÇÃO NO FATURAMENTO GERAL DA EMPRESA</h3>
+            <h3 style="margin-bottom:15px; font-size:13px; color:var(--text-dim)">PARTICIPAÇÃO NA VENDA GERAL DA EMPRESA</h3>
             <table>
                 <thead>
                     <tr>
                         <th style="width:250px">Loja</th>
                         <th class="val-bold">Venda VIP</th><th class="val-bold">Venda IFOOD</th>
-                        <th class="val-bold">Venda Canais</th><th class="val-bold" style="color:var(--pinheiro-orange)">% Participação</th>
+                        <th class="val-bold">Soma Canais</th><th class="val-bold" style="color:var(--pinheiro-orange)">% Part. Empresa</th>
                     </tr>
                 </thead>
                 <tbody id="tabela-corpo"></tbody>
@@ -102,91 +133,100 @@
             try {
                 const r = await fetch(URL_CSV + "&cache=" + new Date().getTime());
                 const t = await r.text();
+                // Usa biblioteca XLSX para ler o CSV (evita erro de vírgula do R$)
                 const workbook = XLSX.read(t, { type: 'string' });
-                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
                 processar(rows);
                 document.getElementById('dot').className = "dot online";
-                document.getElementById('status-text').innerText = "Sistema Sincronizado";
+                document.getElementById('status-text').innerText = "Sistema Online";
             } catch (e) { document.getElementById('status-text').innerText = "Erro ao buscar dados"; }
         }
 
-        function limpar(v) {
-            if (!v) return 0;
-            if (typeof v === 'number') return v;
-            // Remove R$, espaços e pontos de milhar, troca vírgula por ponto.
-            let str = v.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
-            return parseFloat(str) || 0;
+        function n(v) {
+            if(!v) return 0;
+            if(typeof v === 'number') return v;
+            // Remove R$, espaços, pontos (milhar) e troca vírgula por ponto (decimal)
+            let s = v.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+            return parseFloat(s) || 0;
         }
 
         function processar(rows) {
             const head = rows[0].map(h => h ? h.toString().toUpperCase().trim() : "");
-            const iData = head.indexOf("DATA");
+            
+            // Localiza colunas por nome conforme seu print
+            const iMes = head.indexOf("DATA");
             const iLoja = head.indexOf("LOJA");
             const iVip = head.indexOf("VENDA VIP");
             const iIfood = head.indexOf("VENDA IFOOD");
-            const iGeral = head.indexOf("VENDA GERAL");
+            const iMetaG = head.indexOf("META GERAL");
+            const iMetaA = head.indexOf("META APLICATIVO");
+            const iMetaI = head.indexOf("META IFOOD");
             const iRIQ = head.indexOf("QTD ITENS RUPTURADOS IFOOD");
             const iRIV = head.indexOf("VENDA PERDIDA POR RUPTURA NO IFOOD");
             const iRVQ = head.indexOf("QTD DE ITENS RUPTURADOS NA VIP");
             const iRVV = head.indexOf("VENDA PERDIDA POR RUPTURA NA VIP");
 
             db = rows.slice(1).filter(r => r[iLoja]).map(r => ({
-                mes: r[iData] ? r[iData].toString().toUpperCase().trim() : "",
+                mes: r[iMes] ? r[iMes].toString().toUpperCase().trim() : "",
                 loja: r[iLoja],
-                vVip: limpar(r[iVip]),
-                vIfood: limpar(r[iIfood]),
-                vGeral: limpar(r[iGeral]),
-                rIQ: parseInt(r[iRIQ]) || 0,
-                rIV: limpar(r[iRIV]),
-                rVQ: parseInt(r[iRVQ]) || 0,
-                rVV: limpar(r[iRVV])
+                vVip: n(r[iVip]), vIfood: n(r[iIfood]),
+                mG: n(r[iMetaG]), mA: n(r[iMetaA]), mI: n(r[iMetaI]),
+                rIQ: parseInt(r[iRIQ]) || 0, rIV: n(r[iRIV]),
+                rVQ: parseInt(r[iRVQ]) || 0, rVV: n(r[iRVV])
             }));
 
             const meses = [...new Set(db.map(i => i.mes))].sort((a,b) => ordemMeses.indexOf(a) - ordemMeses.indexOf(b));
             const sel = document.getElementById('mesSelect');
-            meses.forEach(m => { if(m) sel.innerHTML += `<option value="${m}">${m}</option>`; });
+            meses.forEach(m => { if(m && m !== "DATA") sel.innerHTML += `<option value="${m}">${m}</option>`; });
             renderizar();
         }
+
+        function getStatusClass(p) { return p >= 100 ? 'bg-green' : p >= 80 ? 'bg-orange' : 'bg-red'; }
 
         function renderizar() {
             const f = document.getElementById('mesSelect').value;
             const dados = f === 'all' ? db : db.filter(i => i.mes === f);
 
-            const tVip = dados.reduce((a,b) => a + b.vVip, 0);
-            const tIfood = dados.reduce((a,b) => a + b.vIfood, 0);
+            const tVip = dados.reduce((a,b)=>a+b.vVip,0);
+            const tIfood = dados.reduce((a,b)=>a+b.vIfood,0);
             const tReal = tVip + tIfood;
             
-            // Soma correta da Venda Geral (Denominator)
-            let vendaGeralReferencia = 0;
-            if (f === 'all') {
-                const mesesUnicos = [...new Set(db.map(i => i.mes))];
-                mesesUnicos.forEach(m => {
-                    const primeiroRegistroDoMes = db.find(x => x.mes === m);
-                    vendaGeralReferencia += primeiroRegistroDoMes ? primeiroRegistroDoMes.vGeral : 0;
-                });
-            } else {
-                vendaGeralReferencia = dados[0] ? dados[0].vGeral : 0;
+            // Cálculo de Metas
+            let mG=0, mA=0, mI=0;
+            if(f === 'all') {
+                let mMes = {}; db.forEach(i => { if(!mMes[i.mes]) mMes[i.mes] = {g:i.mG, a:i.mA, i:i.mI}; });
+                mG = Object.values(mMes).reduce((a,b)=>a+b.g,0);
+                mA = Object.values(mMes).reduce((a,b)=>a+b.a,0);
+                mI = Object.values(mMes).reduce((a,b)=>a+b.i,0);
+            } else { 
+                mG = dados[0].mG; mA = dados[0].mA; mI = dados[0].mI; 
             }
 
-            // Cards
-            let resMes = {}; db.forEach(i => resMes[i.mes] = (resMes[i.mes] || 0) + i.vVip + i.vIfood);
-            let melhorM = Object.keys(resMes).reduce((a, b) => resMes[a] > resMes[b] ? a : b);
+            const pG = (tReal/mG*100)||0; const pA = (tVip/mA*100)||0; const pI = (tIfood/mI*100)||0;
+
+            // Update Cards Metas
+            document.getElementById('m-geral-val').innerText = mG.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('m-geral-status').innerText = pG.toFixed(1) + "% atingido";
+            document.getElementById('m-geral-status').className = "meta-status " + getStatusClass(pG);
+
+            document.getElementById('m-app-val').innerText = mA.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('m-app-status').innerText = pA.toFixed(1) + "% atingido";
+            document.getElementById('m-app-status').className = "meta-status " + getStatusClass(pA);
+
+            document.getElementById('m-ifood-val').innerText = mI.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('m-ifood-status').innerText = pI.toFixed(1) + "% atingido";
+            document.getElementById('m-ifood-status').className = "meta-status " + getStatusClass(pI);
+
+            // Outros KPIs
+            let resM = {}; db.forEach(i => resM[i.mes] = (resM[i.mes]||0) + i.vVip + i.vIfood);
+            let melhorM = Object.keys(resM).reduce((a,b)=> resM[a]>resM[b]?a:b);
             document.getElementById('k-melhor-mes').innerText = melhorM;
-            document.getElementById('k-melhor-mes-val').innerText = "Total: " + resMes[melhorM].toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            document.getElementById('k-total-real').innerText = tReal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-            let lVip = {}, lIfood = {};
-            dados.forEach(i => {
-                lVip[i.loja] = (lVip[i.loja] || 0) + i.vVip;
-                lIfood[i.loja] = (lIfood[i.loja] || 0) + i.vIfood;
-            });
-            let topV = Object.keys(lVip).reduce((a,b) => lVip[a] > lVip[b] ? a : b) || "-";
-            let topI = Object.keys(lIfood).reduce((a,b) => lIfood[a] > lIfood[b] ? a : b) || "-";
-
-            document.getElementById('k-venda-total').innerText = tReal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-            document.getElementById('k-top-vip').innerText = topV;
-            document.getElementById('k-top-vip-val').innerText = lVip[topV].toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-            document.getElementById('k-top-ifood').innerText = topI;
-            document.getElementById('k-top-ifood-val').innerText = lIfood[topI].toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+            let lV = {}, lI = {}; dados.forEach(i => { lV[i.loja]=(lV[i.loja]||0)+i.vVip; lI[i.loja]=(lI[i.loja]||0)+i.vIfood; });
+            document.getElementById('k-top-vip').innerText = Object.keys(lV).reduce((a,b)=>lV[a]>lV[b]?a:b) || "-";
+            document.getElementById('k-top-ifood').innerText = Object.keys(lI).reduce((a,b)=>lI[a]>lI[b]?a:b) || "-";
 
             // Rupturas
             document.getElementById('r-ifood-q').innerText = dados.reduce((a,b)=>a+b.rIQ,0).toLocaleString('pt-BR') + " itens";
@@ -201,14 +241,8 @@
             });
             document.getElementById('tabela-corpo').innerHTML = Object.keys(tab).sort((a,b)=>(tab[b].vV+tab[b].vI)-(tab[a].vV+tab[a].vI)).map(l => {
                 const totalL = tab[l].vV + tab[l].vI;
-                const participacao = vendaGeralReferencia > 0 ? (totalL / vendaGeralReferencia) * 100 : 0;
-                return `<tr>
-                    <td><strong>${l}</strong></td>
-                    <td class="val-bold">R$ ${tab[l].vV.toLocaleString('pt-BR')}</td>
-                    <td class="val-bold">R$ ${tab[l].vI.toLocaleString('pt-BR')}</td>
-                    <td class="val-bold">R$ ${totalL.toLocaleString('pt-BR')}</td>
-                    <td class="val-bold" style="color:var(--pinheiro-orange)">${participacao.toFixed(2)}%</td>
-                </tr>`;
+                const participacao = mG > 0 ? (totalL / mG) * 100 : 0;
+                return `<tr><td><strong>${l}</strong></td><td class="val-bold">R$ ${tab[l].vV.toLocaleString('pt-BR')}</td><td class="val-bold">R$ ${tab[l].vI.toLocaleString('pt-BR')}</td><td class="val-bold">R$ ${totalL.toLocaleString('pt-BR')}</td><td class="val-bold" style="color:var(--pinheiro-orange)">${participacao.toFixed(2)}%</td></tr>`;
             }).join('');
         }
         window.onload = carregar;
