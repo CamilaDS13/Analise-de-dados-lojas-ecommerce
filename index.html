@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Ecommerce Pro</title>
-    <!-- Bibliotecas -->
+    <title>Dashboard Ecommerce Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -13,123 +12,137 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #f97316; /* Laranja vibrante */
+            background: #f97316; /* Laranja */
             min-height: 100vh;
+            color: white;
         }
         .card-blue {
-            background: #1e3a8a; /* Azul escuro */
+            background: #1e3a8a; /* Azul Marinho */
             color: white;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.1);
+            perspective: 1000px;
         }
-        /* Efeito de movimento ao passar o mouse */
+        /* Efeito de movimento 3D */
         .card-blue:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px) rotateX(5deg) rotateY(-2deg);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             background: #1e40af;
+            border-color: rgba(255,255,255,0.4);
         }
-        .custom-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        select { border: none !important; outline: none !important; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .sync-badge {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        select { color: #1e3a8a !important; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto">
-        <!-- Header com Filtros e Exportação -->
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 bg-white/10 p-6 rounded-[2.5rem] backdrop-blur-md border border-white/20">
+        <!-- Header -->
+        <header class="glass-header p-6 rounded-[2.5rem] mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
-                <h1 class="text-3xl font-extrabold text-white">Ecommerce Dashboard</h1>
-                <p class="text-orange-100 font-medium italic">Dados em Tempo Real</p>
+                <h1 class="text-4xl font-extrabold tracking-tighter">Ecommerce Dashboard</h1>
+                <div class="flex items-center mt-2">
+                    <div class="sync-badge px-4 py-1.5 rounded-full flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span class="text-[10px] font-bold tracking-widest uppercase">Sincronizado com Google Sheets</span>
+                    </div>
+                </div>
             </div>
             
-            <div class="flex flex-wrap gap-3">
-                <!-- Filtro de Mês -->
-                <div class="bg-white rounded-2xl px-4 py-2 flex items-center shadow-lg">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase mr-2 text-orange-600">Filtrar Mês:</span>
-                    <select id="filtro-mes" class="font-bold text-slate-700 bg-transparent cursor-pointer">
+            <div class="flex flex-wrap gap-4">
+                <div class="bg-white rounded-2xl px-4 py-2 flex items-center shadow-2xl">
+                    <span class="text-[10px] font-black text-orange-600 uppercase mr-3">Mês:</span>
+                    <select id="filtro-mes" class="font-bold bg-transparent outline-none cursor-pointer">
                         <option value="TODOS">Todos os Meses</option>
                     </select>
                 </div>
 
-                <!-- Botão Exportar -->
-                <button onclick="exportarExcel()" class="bg-blue-900 hover:bg-black text-white px-6 py-2 rounded-2xl font-bold flex items-center transition-all shadow-lg">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Exportar Excel
+                <button onclick="exportarExcel()" class="bg-white hover:bg-blue-50 text-blue-900 px-6 py-2 rounded-2xl font-bold flex items-center transition-all shadow-xl group">
+                    <svg class="w-4 h-4 mr-2 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Exportar Relatório
                 </button>
             </div>
         </header>
 
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="card-blue p-6 rounded-[2rem] custom-shadow border-b-4 border-white/20">
-                <p class="text-xs font-bold text-orange-300 uppercase mb-1">Mês de Maior Venda</p>
-                <h2 id="kpi-mes" class="text-2xl font-black italic uppercase">---</h2>
-                <p id="kpi-mes-valor" class="text-white/70 font-bold text-sm"></p>
+        <!-- Cards de KPI -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
+                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Recorde Mensal</p>
+                <h2 id="kpi-mes" class="text-3xl font-black italic uppercase tracking-tighter">---</h2>
+                <p id="kpi-mes-valor" class="text-blue-200 font-bold mt-2"></p>
             </div>
 
-            <div class="card-blue p-6 rounded-[2rem] custom-shadow border-b-4 border-white/20">
-                <p class="text-xs font-bold text-orange-300 uppercase mb-3">Líderes por Canal</p>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-xs font-bold bg-white/10 p-2 rounded-lg">
-                        <span class="text-sky-300 italic uppercase">VIP</span>
-                        <span id="top-vip">---</span>
+            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
+                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-4">Top Performance</p>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl">
+                        <span class="text-[9px] font-bold text-blue-300">VIP</span>
+                        <span id="top-vip" class="text-sm font-black uppercase">---</span>
                     </div>
-                    <div class="flex justify-between text-xs font-bold bg-white/10 p-2 rounded-lg">
-                        <span class="text-rose-400 italic uppercase">IFOOD</span>
-                        <span id="top-ifood">---</span>
+                    <div class="flex justify-between items-center bg-black/20 p-2 rounded-xl">
+                        <span class="text-[9px] font-bold text-rose-400">IFOOD</span>
+                        <span id="top-ifood" class="text-sm font-black uppercase">---</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card-blue p-6 rounded-[2rem] custom-shadow border-b-4 border-white/20">
-                <p class="text-xs font-bold text-orange-300 uppercase mb-2">Total de Rupturas</p>
+            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
+                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Itens Rupturados</p>
                 <div class="flex items-end justify-between">
-                    <span id="rupturas-total" class="text-4xl font-black">0</span>
-                    <div class="text-right">
-                        <span class="text-[9px] font-black bg-white/20 px-2 py-1 rounded">ESTOQUE</span>
-                    </div>
+                    <span id="rupturas-total" class="text-5xl font-black tracking-tighter">0</span>
+                    <span class="text-xs font-bold text-blue-300 italic mb-2">Total Geral</span>
                 </div>
             </div>
 
-            <div class="card-blue p-6 rounded-[2rem] custom-shadow border-b-4 border-white/20">
-                <p class="text-xs font-bold text-orange-300 uppercase mb-1">Atingimento de Meta</p>
-                <h2 id="kpi-meta-percent" class="text-3xl font-black">0%</h2>
-                <div class="w-full bg-white/10 h-2 rounded-full mt-3">
-                    <div id="meta-bar" class="bg-orange-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+            <div class="card-blue p-8 rounded-[2.5rem] shadow-2xl">
+                <p class="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-2">Objetivo (Meta)</p>
+                <h2 id="kpi-meta-percent" class="text-4xl font-black">0%</h2>
+                <div class="w-full bg-black/30 h-2.5 rounded-full mt-4 overflow-hidden">
+                    <div id="meta-bar" class="bg-orange-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_#f97316]" style="width: 0%"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Conteúdo Principal -->
-        <div class="flex flex-col gap-8">
-            <!-- Gráfico de Volume -->
-            <div class="bg-white p-8 rounded-[3rem] custom-shadow" style="height: 350px;">
-                <h3 class="text-sm font-black text-slate-800 mb-6 flex items-center">
-                    <span class="w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
-                    VOLUME DE VENDAS POR UNIDADE (R$)
+        <!-- Área de Gráfico e Tabela -->
+        <div class="flex flex-col gap-8 mb-10">
+            <div class="bg-white p-8 rounded-[3rem] shadow-2xl" style="height: 380px;">
+                <h3 class="text-blue-900 font-black text-sm uppercase tracking-widest mb-6 flex items-center">
+                    <span class="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
+                    Faturamento Bruto por Loja
                 </h3>
-                <div class="h-[230px]">
+                <div class="h-[250px]">
                     <canvas id="chartBarras"></canvas>
                 </div>
             </div>
 
-            <!-- Tabela de Ranking -->
-            <div class="bg-white rounded-[3rem] custom-shadow overflow-hidden mb-10">
-                <div class="p-8 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest italic">Performance por Loja</h3>
+            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100">
+                    <h3 class="text-blue-900 font-black text-sm uppercase tracking-widest italic">Performance Detalhada</h3>
                 </div>
-                <div class="overflow-x-auto p-4">
+                <div class="overflow-x-auto">
                     <table id="tabela-dados" class="w-full text-left">
-                        <thead>
-                            <tr class="text-[10px] uppercase text-slate-400 font-black border-b">
-                                <th class="px-6 py-4">Loja</th>
-                                <th class="px-6 py-4 text-right">Venda VIP</th>
-                                <th class="px-6 py-4 text-right">Venda iFood</th>
-                                <th class="px-6 py-4 text-right">Venda Total</th>
-                                <th class="px-6 py-4 text-center">Rupturas</th>
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-black">
+                            <tr>
+                                <th class="px-8 py-5">Unidade / Loja</th>
+                                <th class="px-8 py-5 text-right text-blue-600">Venda VIP</th>
+                                <th class="px-8 py-5 text-right text-rose-500">Venda iFood</th>
+                                <th class="px-8 py-5 text-right text-slate-800">Faturamento Total</th>
+                                <th class="px-8 py-5 text-center">Rupturas</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-corpo" class="text-sm font-bold text-slate-600">
-                            <!-- Inserido via JS -->
+                        <tbody id="tabela-corpo" class="text-sm font-bold text-slate-700 divide-y divide-slate-100">
+                            <!-- JS -->
                         </tbody>
                     </table>
                 </div>
@@ -143,44 +156,46 @@
         let dadosGlobais = [];
         let chartInstance = null;
 
-        // Limpeza de número (suporta 1.250,50 ou 1250.50)
-        function parseNum(v) {
-            if (!v) return 0;
-            let n = v.toString().replace('R$', '').replace(/\s/g, '');
-            if (n.includes('.') && n.includes(',')) n = n.replace(/\./g, '').replace(',', '.');
-            else n = n.replace(',', '.');
-            return parseFloat(n) || 0;
+        // FUNÇÃO DE LIMPEZA DE NÚMEROS CORRIGIDA
+        function parseNum(valor) {
+            if (!valor) return 0;
+            // Remove R$, espaços e pontos de milhar
+            let limpo = valor.toString().replace(/R\$/g, '').replace(/\s/g, '').replace(/\./g, '');
+            // Troca a vírgula decimal por ponto
+            limpo = limpo.replace(',', '.');
+            return parseFloat(limpo) || 0;
         }
 
         async function init() {
             try {
                 const res = await fetch(URL_CSV);
-                const csv = await res.text();
-                const linhas = csv.split('\n').map(l => l.split(','));
-                dadosGlobais = linhas.slice(1);
+                const csvText = await res.text();
+                
+                // Detecta se o separador é ; (comum no Brasil) ou ,
+                const delimitador = csvText.indexOf(';') > -1 ? ';' : ',';
+                const linhas = csvText.split('\n').map(l => l.split(delimitador));
+                
+                dadosGlobais = linhas.slice(1).filter(col => col.length > 2);
 
                 // Popular Filtro de Mês
                 const mesesUnicos = [...new Set(dadosGlobais.map(c => c[0].trim()))].filter(m => m !== "");
                 const select = document.getElementById('filtro-mes');
                 mesesUnicos.forEach(m => {
                     const opt = document.createElement('option');
-                    opt.value = m;
-                    opt.innerText = m;
+                    opt.value = m; opt.innerText = m;
                     select.appendChild(opt);
                 });
 
-                // Evento de Filtro
-                select.addEventListener('change', () => atualizarDashboard(select.value));
-
-                atualizarDashboard("TODOS");
-            } catch (e) { console.error("Erro:", e); }
+                select.addEventListener('change', () => atualizar(select.value));
+                atualizar("TODOS");
+            } catch (e) { console.error("Erro na carga:", e); }
         }
 
-        function atualizarDashboard(mesFiltro) {
+        function atualizar(mesFiltro) {
             let lojas = {};
-            let mesesAgrupados = {};
-            let totalGeral = 0;
-            let metaTotal = 0;
+            let meses = {};
+            let faturamentoGeral = 0;
+            let metaGeral = 0;
             let rupturasTotal = 0;
 
             dadosGlobais.forEach(col => {
@@ -190,24 +205,25 @@
                 const nome = col[1].trim();
                 const vVip = parseNum(col[2]);
                 const vIfood = parseNum(col[3]);
-                const meta = parseNum(col[4]);
-                const rup = parseInt(col[7]) || 0;
-                const vTotal = vVip + vIfood;
+                const meta = parseNum(col[4]); // Meta Geral
+                const rup = parseInt(col[7]) || 0; // Rupturas na coluna H
+                const totalLoja = vVip + vIfood;
 
-                totalGeral += vTotal;
+                faturamentoGeral += totalLoja;
                 rupturasTotal += rup;
-                if (meta > metaTotal) metaTotal = meta;
+                // Meta Geral costuma estar repetida, pegamos o valor da linha ou acumulamos se for diferente
+                if (meta > metaGeral) metaGeral = meta;
 
-                mesesAgrupados[mes] = (mesesAgrupados[mes] || 0) + vTotal;
+                meses[mes] = (meses[mes] || 0) + totalLoja;
 
                 if (!lojas[nome]) lojas[nome] = { vVip: 0, vIfood: 0, total: 0, rup: 0 };
                 lojas[nome].vVip += vVip;
                 lojas[nome].vIfood += vIfood;
-                lojas[nome].total += vTotal;
+                lojas[nome].total += totalLoja;
                 lojas[nome].rup += rup;
             });
 
-            renderizar(lojas, mesesAgrupados, totalGeral, metaTotal, rupturasTotal);
+            renderizar(lojas, meses, faturamentoGeral, metaGeral, rupturasTotal);
         }
 
         function renderizar(lojas, meses, total, meta, rupturas) {
@@ -217,11 +233,11 @@
             document.getElementById('kpi-mes-valor').innerText = (meses[melhorMes] || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
             document.getElementById('rupturas-total').innerText = rupturas;
 
-            const perc = meta > 0 ? Math.min((total / meta) * 100, 100).toFixed(1) : 0;
-            document.getElementById('kpi-meta-percent').innerText = perc + '%';
-            document.getElementById('meta-bar').style.width = perc + '%';
+            const percentMeta = meta > 0 ? Math.min((total / meta) * 100, 100).toFixed(1) : 0;
+            document.getElementById('kpi-meta-percent').innerText = percentMeta + '%';
+            document.getElementById('meta-bar').style.width = percentMeta + '%';
 
-            // Top Lojas
+            // Ranking
             let tVip = {n: '---', v: 0}, tIfood = {n: '---', v: 0};
             const lista = Object.keys(lojas).map(n => {
                 const l = lojas[n];
@@ -238,13 +254,13 @@
             corpo.innerHTML = "";
             lista.forEach(l => {
                 corpo.innerHTML += `
-                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 text-slate-800">${l.n}</td>
-                        <td class="px-6 py-4 text-right text-blue-700">${l.vVip.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
-                        <td class="px-6 py-4 text-right text-rose-500">${l.vIfood.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
-                        <td class="px-6 py-4 text-right font-black text-slate-900">${l.total.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
-                        <td class="px-6 py-4 text-center">
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-[10px]">${l.rup}</span>
+                    <tr class="hover:bg-blue-50/50 transition-colors">
+                        <td class="px-8 py-4 font-black text-blue-900 uppercase text-xs">${l.n}</td>
+                        <td class="px-8 py-4 text-right text-blue-600 font-bold">${l.vVip.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
+                        <td class="px-8 py-4 text-right text-rose-500 font-bold">${l.vIfood.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
+                        <td class="px-8 py-4 text-right font-black text-slate-900">${l.total.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</td>
+                        <td class="px-8 py-4 text-center">
+                            <span class="bg-blue-900 text-white px-3 py-1 rounded-full text-[10px] font-black">${l.rup}</span>
                         </td>
                     </tr>
                 `;
@@ -260,8 +276,8 @@
                     datasets: [{
                         data: lista.slice(0, 10).map(l => l.total),
                         backgroundColor: '#1e3a8a',
-                        borderRadius: 10,
-                        barThickness: 25
+                        borderRadius: 15,
+                        barThickness: 30
                     }]
                 },
                 options: {
@@ -269,7 +285,7 @@
                     plugins: { legend: { display: false } },
                     scales: { 
                         y: { display: false },
-                        x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' } } }
+                        x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' }, color: '#1e3a8a' } }
                     }
                 }
             });
@@ -278,8 +294,8 @@
         function exportarExcel() {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.table_to_sheet(document.getElementById('tabela-dados'));
-            XLSX.utils.book_append_sheet(wb, ws, "Relatorio_Ecommerce");
-            XLSX.utils.writeFile(wb, "Dashboard_Vendas.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Dashboard");
+            XLSX.utils.writeFile(wb, "Relatorio_Vendas.xlsx");
         }
 
         init();
